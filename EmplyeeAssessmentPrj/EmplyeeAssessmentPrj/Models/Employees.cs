@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace EmplyeeAssessmentPrj.Models
 {
-    public class Employees : INotifyPropertyChanged
+    public class Employees : INotifyPropertyChanged,IDataErrorInfo
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -17,9 +18,9 @@ namespace EmplyeeAssessmentPrj.Models
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private int _employeeId;
+        private int? _employeeId;
 
-        public int EmployeeId
+        public int? EmployeeId
         {
             get { return _employeeId; }
             set { 
@@ -61,9 +62,70 @@ namespace EmplyeeAssessmentPrj.Models
             }
         }
 
+        #region IDataErrorInfo Members
 
+        private string _error;
 
+        public string Error
+        {
+            get => _error;
+            set 
+            {
+                if (_error != value)
+                {
+                    _error = value;
+                   OnPropertyChanged("Error");
+                }
+            }
+        }
 
+        public string this[string columnName]
+        {
+            get
+            {
+                return OnValidate(columnName);
+            }
+        }
 
+        private string OnValidate(string columnName)
+        {
+            string result = string.Empty;
+            if (columnName == "Name")
+            {
+                if (string.IsNullOrEmpty(Name))
+                {
+                    result = "Name is mandatory";
+                }
+                else if (!Regex.IsMatch(Name, @"^[a-zA-Z]+$"))
+                {
+                    result = "Should enter alphabets only!!!";
+                }
+            }
+
+            if (columnName == "Designation")
+            {
+                if (string.IsNullOrEmpty(Designation))
+                {
+                    result = "Designation Required";
+                }
+                else if (!Regex.IsMatch(Designation, @"^[a-zA-Z]+$"))
+                {
+                    result = "Should enter alphabets only!!!";
+                }
+            }
+            
+            if (result == null)
+            {
+                Error = null;
+            }
+            else
+            {
+                Error = "Error";
+            }
+            return result;
+        }
+
+        #endregion
     }
 }
+

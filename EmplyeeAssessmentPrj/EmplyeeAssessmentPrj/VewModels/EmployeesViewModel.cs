@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -28,6 +29,7 @@ namespace EmplyeeAssessmentPrj.VewModels
         {
             objEmployeeService = new EmployeeService();
             LoadData();
+            DepartmentLoadData();
             SubmitEmployee = new Employees();
             saveCommand = new RelayCommand(Save);
         }
@@ -46,15 +48,24 @@ namespace EmplyeeAssessmentPrj.VewModels
             get { return filteredEmployees; }
             set { filteredEmployees = value; OnPropertyChanged("FilteredEmployeeList"); }
         }
+        private List<Departments> departmentsList;
+
+        public List<Departments> DepartmentsList
+        {
+            get { return departmentsList; }
+            set { departmentsList = value; OnPropertyChanged("DepartmentsList"); }
+        }
 
         private ObservableCollection<string> _departments;
         public ObservableCollection<string> Departments
         {
-            get { return new ObservableCollection<string>(EmployeesList.Select(o => o.Department).Distinct());
+            get { return new ObservableCollection<string>(DepartmentsList.Select(o => o.DepartmentName).Distinct());
             }
             set { _departments = value; OnPropertyChanged("Departments"); }
             
         }
+    
+
 
         private Employees employees;
 
@@ -93,10 +104,10 @@ namespace EmplyeeAssessmentPrj.VewModels
         {
             try
             {
-                if(SubmitEmployee.EmployeeId==0 && string.IsNullOrWhiteSpace(SubmitEmployee.Name) && 
-                    string.IsNullOrWhiteSpace(SubmitEmployee.Designation) && string.IsNullOrWhiteSpace(SubmitEmployee.Department))
+                if(SubmitEmployee.EmployeeId==0 || SubmitEmployee.Name==null || SubmitEmployee.Designation == null
+                     || SubmitEmployee.Department == null )
                 {
-                    Message = "Employee not saved, plese enter valid details";
+                    Message = "Employee not saved, plese enter data in valid formate";
                 }
                 else
                 {
@@ -110,6 +121,7 @@ namespace EmplyeeAssessmentPrj.VewModels
                     {
                         Message = "Employee not saved";
                     }
+                    SubmitEmployee = new Employees();
                 }
         
             }
@@ -125,5 +137,20 @@ namespace EmplyeeAssessmentPrj.VewModels
             employeesList = objEmployeeService.GetAll();
             FilteredEmployeeList = employeesList;
         }
+
+        private void DepartmentLoadData()
+        {
+            departmentsList = objEmployeeService.GetAllDepartment();
+            DepartmentsList = departmentsList;
+        }
+
+        private string _error;
+
+        public string Error
+        {
+            get { return _error; }
+            set { _error = value; OnPropertyChanged("Error"); }
+        }
+
     }
 }

@@ -28,7 +28,7 @@
                 </StackPanel>
                 <StackPanel Grid.Column="1" Margin="0,0,10,0" >
                     <TextBox Text="{Binding Path=SubmitEmployee.EmployeeId, Mode=TwoWay}"
-                             x:Name="TextBoxID"/>
+                             x:Name="TextBoxID" PreviewTextInput="TextBoxID_PreviewTextInput"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="0"
@@ -36,7 +36,8 @@
                     <TextBlock Text="Employee Name:"/>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,0,10,0" >
-                    <TextBox Text="{Binding Path=SubmitEmployee.Name, Mode=TwoWay}"
+                    <TextBox Text="{Binding Path=SubmitEmployee.Name, UpdateSourceTrigger=PropertyChanged,
+                        ValidatesOnDataErrors=True, Mode=TwoWay}"
                              x:Name="TextBoxName"/>
                 </StackPanel>
 
@@ -45,7 +46,8 @@
                     <TextBlock Text="Designation:"/>
                 </StackPanel>
                 <StackPanel Grid.Row="2" Grid.Column="1" Margin="0,0,10,0" >
-                    <TextBox Text="{Binding Path=SubmitEmployee.Designation, Mode=TwoWay}"
+                    <TextBox Text="{Binding Path=SubmitEmployee.Designation,  UpdateSourceTrigger=PropertyChanged,
+                        ValidatesOnDataErrors=True, Mode=TwoWay}"
                              x:Name="TextBoxDesignation"/>
                 </StackPanel>
 
@@ -54,23 +56,32 @@
                     <TextBlock Text="Department:"/>
                 </StackPanel>
                 <StackPanel Grid.Row="3" Grid.Column="1" Margin="0,0,10,0" >
-                    <TextBox Text="{Binding Path=SubmitEmployee.Department, Mode=TwoWay}" 
-                             x:Name="TextBoxDepartment"/>
+                    <ComboBox SelectedItem="{Binding Path=SubmitEmployee.Department}" ItemsSource="{Binding Path=Departments, Mode=TwoWay}"  
+                        ></ComboBox>
                 </StackPanel>
                 <StackPanel Grid.Column="0"
                             Margin="10,0,15,15" Grid.Row="4">
                     <Button Content="Add" Command="{Binding Path=SaveCommand}"
-                            Click="Button_Click"/>
+                            Click="Button_Click">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="IsEnabled" Value="False"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Error}" Value="{x:Null}">
+                                        <Setter Property="IsEnabled" Value="True"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </StackPanel>
                 <StackPanel Grid.Row="4" Grid.Column="1" Margin="0,0,10,0" >
-                    <ComboBox ItemsSource="{Binding Path=EmployeesList}"
-                              SelectedItem="{Binding Path=Employees}"
-                              DisplayMemberPath="Department"  
+                    <ComboBox ItemsSource="{Binding Path=Departments}"  
                         SelectionChanged="FinishDropdown_SelectionChanged"></ComboBox>
                 </StackPanel>
                 <StackPanel Grid.ColumnSpan="2"
                             Margin="10,0,0,15" Grid.Row="5">
-                    <TextBlock Text="{Binding Path=Message}" FontFamily="Red"/>
+                    <TextBlock Text="{Binding Path=Message}" Foreground="Red"/>
                 </StackPanel>
             </Grid>
                

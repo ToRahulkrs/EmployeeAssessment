@@ -16,6 +16,7 @@ using EmplyeeAssessmentPrj.Models;
 using EmplyeeAssessmentPrj.VewModels;
 using System.Collections.ObjectModel;
 using EmplyeeAssessmentPrj.Views;
+using System.Text.RegularExpressions;
 
 namespace EmplyeeAssessmentPrj
 {
@@ -34,14 +35,20 @@ namespace EmplyeeAssessmentPrj
 
         private void FinishDropdown_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //var selectedDept = (string)((ComboBox)sender).SelectedValue;
-            var selectedDept = ((EmplyeeAssessmentPrj.Models.Employees)((ComboBox)sender).SelectedValue).Department;
+            var selectedDept = (string)((ComboBox)sender).SelectedValue;
+            //var selectedDept = ((EmplyeeAssessmentPrj.Models.Employees)((ComboBox)sender).SelectedValue).Department;
             ViewModel.FilteredEmployeeList = new ObservableCollection<Employees>(ViewModel.EmployeesList.Where(emp => emp.Department.Contains(selectedDept))); 
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
            // TextBoxID.Text = TextBoxName.Text = TextBoxDesignation.Text = TextBoxDepartment.Text = "";
+        }
+
+        private void TextBoxID_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }
